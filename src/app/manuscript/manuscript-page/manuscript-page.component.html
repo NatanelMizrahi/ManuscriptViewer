@@ -1,0 +1,71 @@
+<html>
+  <body (click)=closeDropdowns($event.target)>
+    <div class="bar">
+      <a class="text">Manuscripts</a>
+      <button id="userButton" class="userButton" *ngIf="user" (click)=userDropdown()> {{user.username.charAt(0)}} </button>
+   </div>
+
+    <div id="userDropdown" class="userDropdown">
+      <h2 *ngIf="user"> {{user.username}} </h2>
+      <button>Change Password</button>
+      <button routerLink="/home-page" routerLinkActive="active" >Log Out</button>
+    </div>
+  
+    <div class="sidenav">
+      <input id="searchbar" type="text" (keyup)="search()" placeholder="Search">
+      <button class="optionButton" (click)=createNewManuscript();toggleMainWindow(0)>
+          <mat-icon class=optionIcon>add</mat-icon>
+      </button>
+      <button class="optionButton">
+          <mat-icon class=optionIcon>remove</mat-icon>
+      </button>
+      <button id="optionButton" class="optionButton" (click)=optionDropdown()>
+          <mat-icon id="moreOptionsIcon" class=optionIcon>more_horiz</mat-icon>
+      </button>
+      <div id="optionDropdown" class="optionDropdown">
+        <button>Overview</button>
+        <button>Pages</button>
+        <button>Grounds</button>
+      </div>
+      <button class="optionButton">
+          <mat-icon class=optionIcon>arrow_downward</mat-icon>
+      </button>
+      <div style="overflow-y:auto;">
+        <table id="manuscriptstable" *ngFor="let manuscript of manuscripts">
+          <tr style="height: 40px;" id="{{'manuscriptButton' + manuscript._id}}" (mouseover)=manuscriptHoverOn(manuscript._id) (mouseleave)=manuscriptHoverOff(manuscript._id)>
+            <td class="manuscriptTable" (click)=manuscriptSelected(manuscript) [ngClass]="{selected: manuscript === selectedManuscript}"> {{manuscript.title}} </td>
+          </tr>
+          <div class="manuscriptHover" id="{{'manuscriptHover' + manuscript._id}}"> <p> id: {{manuscript._id}} </p> </div>
+        </table>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="mainBar">
+        <button class="mainButton" (click)=toggleMainWindow(1)>Annotate</button>
+        <button class="mainButton" (click)=toggleMainWindow(2)>View</button>
+        <button class="mainButton" (click)=toggleMainWindow(3)>Align-Manuscripts</button>
+        <button class="mainButton" (click)=toggleMainWindow(4)>Tasks</button>
+        <button class="mainButton" (click)=toggleMainWindow(5)>Tools</button>
+        <button id ="flowButton" class="mainButton" (click)=flowDropdown()>Flow</button>
+        <div id="flowDropdown" class="flowDropdown">
+          <button (click)=toggleMainWindow(6)>Create</button>
+          <button (click)=toggleMainWindow(7)>Edit</button>
+          <button (click)=toggleMainWindow(8)>Execute</button>
+        </div>
+      </div>
+      <div class="mainWindow">
+        <manuscript-details id="Form"
+          [user]="user"
+          (resetEvent)="createNewManuscript()"
+          [(manuscript)]="selectedManuscript"
+          [createHandler]="addManuscript"
+          [updateHandler]="updateManuscript"
+          [deleteHandler]="deleteManuscript"
+          [(showForm)]="showForm">
+        </manuscript-details> 
+        <!-- Put your other components here and give them the id as stated in the activeWindows variable -->
+      </div>
+    </div>
+  </body>
+</html>

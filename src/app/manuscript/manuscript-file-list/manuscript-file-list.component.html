@@ -1,0 +1,88 @@
+<div id="viewwrapper" class="viewer-wrapper">
+  <div class="col-md-3 well full-height files-list-box">
+    <h4>Files</h4>
+    <hr>
+    <div class="list-wrapper">
+      <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
+        <div class="example-box" *ngFor="let file of files; let i = index" cdkDrag>
+          <img [src]="file.url" class="img-responsive" [alt]="file.name" (click)="selectedFile = file; selectedIndex=i">
+          <img *cdkDragPreview [src]="file.url" [alt]="file.url">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--viewer-->
+  <div id="filewrapper" *ngIf="selectedFile" class="well full-height image-container container-fluid" [ngClass]="{fullscreen:fullscreen}">
+    <button class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true" (click)="selectedFile = null">&times;</span>
+    </button>
+    <!--controls-->
+    <li class="image-options">
+      <span class="glyphicon glyphicon-option-vertical"></span>
+    </li>
+    <ul class="controls">
+      <li (click)="toggleFullScreen()">
+        <span class="glyphicon" [ngClass]="{ 'glyphicon-fullscreen': !fullscreen, 'glyphicon-resize-small':fullscreen }"></span>
+        <i>Toggle fullscreen</i>
+      </li>
+      <li (click)="delete.click()">
+        <span class="glyphicon glyphicon-trash"></span>
+        <i>Delete</i>
+      </li>
+      <li (click)="moveUp.click()">
+        <span class="glyphicon glyphicon-chevron-up"></span>
+        <i>Move up</i>
+      </li>
+      <li (click)="moveDown.click()">
+        <span class="glyphicon glyphicon-chevron-down"></span>
+        <i>Move down</i>
+      </li>
+      <li (click)="prev.click()">
+        <span class="glyphicon glyphicon-triangle-top"></span>
+        <i>Previous page</i>
+      </li>
+      <li (click)="next.click()">
+        <span class="glyphicon glyphicon-triangle-bottom"></span>
+        <i>Next page</i>
+      </li>
+    </ul>
+    <div class="row">
+      <span class="file-header col-md-8">
+        <strong>{{ selectedFile.name }}</strong>
+        <br>Last modified: {{selectedFile.modified || "unknown" }}
+      </span>
+
+      <div class=" row control-panel" hidden>
+        <div class="btn-group-vertical move-btns">
+          <button #moveUp class="btn btn-sm " (click)="moveFileByOffset(-1)" [disabled]="selectedIndex == 0">
+            <span class="glyphicon glyphicon-chevron-up"></span>
+          </button>
+          <button #moveDown class="btn btn-sm " (click)="moveFileByOffset(+1)" [disabled]="selectedIndex == files.length - 1">
+            <span class="glyphicon glyphicon-chevron-down"></span>
+          </button>
+        </div>
+
+        <div class="btn-group-vertical move-btns">
+          <button #prev class="btn btn-sm btn-warning" (click)="selectFile(selectedIndex -1)" [disabled]="selectedIndex == 0">
+            <span class="glyphicon glyphicon-chevron-up"></span>
+          </button>
+          <button #next class="btn btn-sm btn-warning" (click)="selectFile(selectedIndex +1)" [disabled]="selectedIndex == files.length - 1">
+            <span class="glyphicon glyphicon-chevron-down"></span>
+          </button>
+        </div>
+
+        <button #delete class="btn btn-lg btn-danger" (click)="markForDelete(selectedIndex)">
+          <span class="glyphicon glyphicon-trash"></span>
+        </button>
+      </div>
+    </div>
+
+    <hr style="margin-top:5px">
+    <div class="img-wrapper">
+      <img id="selectedFile" [src]="selectedFile.url" class="img-responsive">
+    </div>
+  </div>
+  <div class="alert alert warning fullscreen-message" *ngIf="fullscreenMessage">press ESC to exit fullscreen</div>
+
+</div>

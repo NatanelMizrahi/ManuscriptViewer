@@ -1,0 +1,39 @@
+body {
+    font-family: 'Times New Roman';
+}
+
+#box{
+    position: absolute;
+    width: 80%;
+    top: 30%;
+    left: 40%;
+    width:20%;
+    border: 1px solid black; 
+    text-align: center;
+}
+  
+.bar{
+    background:#ecf0f1;
+    border: none;
+    padding: 8px;
+    width:80%;
+    color:#AAAAAA;
+    margin-top:5%;
+    font-size:18px;
+}
+  
+.btn{
+    background: blue;
+    width: 30%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    color: white;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    float: center;
+    font-size: 12px;
+}
+  
+.btn:hover{
+    background: #B0C4DE; 
+}

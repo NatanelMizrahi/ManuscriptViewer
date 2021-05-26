@@ -1,0 +1,54 @@
+/* You can add global styles to this file, and also import other style files */
+@import url('https://unpkg.com/bootstrap@3.3.7/dist/css/bootstrap.min.css');
+@import url('https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/themes/prism.css');
+
+.capitalize:first-letter, form label::first-letter { 
+     text-transform: uppercase; 
+}
+ ::-webkit-input-placeholder {
+    text-transform:capitalize;
+  }
+ :-moz-placeholder { 
+    text-transform: capitalize;
+ }
+ ::-moz-placeholder:first-letter {  
+    text-transform: capitalize;
+ }
+ :-ms-input-placeholder:first-letter { 
+    text-transform: capitalize;
+ }
+ html, body {
+   height: 100%;
+   margin: 0;
+   padding: 0;
+ }
+ input[type=date]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    display: none;
+}
+.btn-space {
+    margin-right: 5px;
+}
+form textarea {
+    resize: vertical; 
+    height: 5em;
+    max-height: 7em;
+    min-height: 3em;
+}
+
+button.calendar, button.calendar:active {
+    /* width: 4.5rem; */
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACIAAAAcCAYAAAAEN20fAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAOxAAADsQBlSsOGwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAEUSURBVEiJ7ZQxToVAEIY/YCHGxN6XGOIpnpaEsBSeQC9ArZbm9TZ6ADyBNzAhQGGl8Riv4BLAWAgmkpBYkH1b8FWT2WK/zJ8ZJ4qiI6XUI3ANnGKWBnht2/ZBDRK3hgVGNsCd7/ui+JkEIrKtqurLpEWaphd933+IyI3LEIdpCYCiKD6HcuOa/nwOa0ScJEnk0BJg0UTUWJRl6RxCYEzEmomsIlPU3IPW+grIAbquy+q6fluy/28RIBeRMwDXdXMgXLj/B2uimRXpui4D9sBeRLKl+1N+L+t6RwbWrZliTTTr1oxYtzVWiTQAcRxvTX+eJMnlUDaO1vpZRO5NS0x48sIwfPc87xg4B04MCzQi8hIEwe4bl1DnFMCN2zsAAAAASUVORK5CYII=') !important;
+    background-repeat: no-repeat;
+    background-size: 90%;
+    background-position: center;
+  }
+
+.full-height{
+   height:100%;
+}
+.well {
+   /* background: #222;
+   color: #999999; */
+}
