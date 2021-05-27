@@ -1,0 +1,18 @@
+<div class="top-right">
+    <div>
+        <a href="/test/users">
+            <button class="btn btn-info float">ADD TEST USERS</button>
+        </a>
+        <button *ngFor="let user of testUsers; let i = index"
+                (click)='setUserTest(i)'
+                class="btn btn-info float">{{ user.username }}
+        </button>
+    </div>
+</div>
+
+
+<manuscript-list 
+  [hidden] = "!show"
+  [user]="user"
+  class="full-height">
+</manuscript-list>

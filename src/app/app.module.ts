@@ -4,29 +4,25 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
 import { NgbModule, NgbDatepickerModule, NgbActiveModal, NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
-import { DragDropModule } from '@angular/cdk/drag-drop';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import { MaterialModule } from './shared/material.module';
-import {MatDialogModule} from '@angular/material';
 import { AppComponent } from './app.component';
-import { HomePageComponent } from './home-page/home-page.component';
-import { UserPageComponent } from './user-page/user-page.component';
 import { ManuscriptDetailsComponent } from './manuscript/manuscript-details/manuscript-details.component';
+import { ManuscriptListComponent } from './manuscript/manuscript-list/manuscript-list.component';
 import { MyDatePickerModule } from 'mydatepicker';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ManuscriptFileListComponent } from './manuscript/manuscript-file-list/manuscript-file-list.component';
+import { FileViewerComponent } from './manuscript/file-viewer/file-viewer.component';
 import { NgbdModalConfirmAutofocus } from './manuscript/manuscript-details/confirm';
-import { AppRoutingModule } from './app-routing.module';
-import { ManuscriptPageComponent } from './manuscript/manuscript-page/manuscript-page.component';
+import { ManuscriptWrapperComponent } from './manuscript/manuscript-wrapper/manuscript-wrapper.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomePageComponent,
-    UserPageComponent,
     ManuscriptDetailsComponent,
+    ManuscriptListComponent,
     ManuscriptFileListComponent,
+    FileViewerComponent,
     NgbdModalConfirmAutofocus,
-    ManuscriptPageComponent
+    ManuscriptWrapperComponent
   ],
   imports: [
     BrowserModule,
@@ -37,8 +33,6 @@ import { ManuscriptPageComponent } from './manuscript/manuscript-page/manuscript
     HttpClientModule,
     MyDatePickerModule,
     DragDropModule,
-    BrowserAnimationsModule, MaterialModule, MatDialogModule, // Angular Material
-    AppRoutingModule
   ],
   providers: [
     NgbActiveModal,

@@ -7,7 +7,7 @@ import { HttpEventType} from '@angular/common/http'
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgbdModalConfirmAutofocus } from './confirm'
 import { deepEqual } from 'assert';
-import { User } from '../user';
+import { User } from '../manuscript-wrapper/user';
 
 const ConfirmationWindow = { modal: NgbdModalConfirmAutofocus };
 

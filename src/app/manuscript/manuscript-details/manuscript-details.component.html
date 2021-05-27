@@ -1,4 +1,4 @@
-<div id="formwrapper" *ngIf="manuscript" class="col-md-4 full-height">
+<div *ngIf="manuscript" class="col-md-4 full-height">
   <div class="row well well-lg" [ngClass]="{visible: showForm, hidden:!showForm, 'full-height': !showUploads}">
     <form #form="ngForm">
       <!-- TODO fix -->
@@ -77,7 +77,7 @@
         <div class="col-md-10">
           <textarea class="form-control" type="text" 
                 [(ngModel)]="manuscript.description" #description="ngModel" name="description"        
-                [ngClass]="setClass(description)" placeholder="description" 
+                [ngClass]="setClass(description)" placeholder="description"
                 [required]="true"
                 [disabled]="inProgress"></textarea>
           <p class="capitalize text-danger" 
@@ -211,9 +211,8 @@
 </div>
 
 <!--VIEWER-->
-<!-- was 8 : 12 -->
 <div class="full-height" 
-    [ngClass]="showForm? 'col-md-6': 'col-md-9'" 
+    [ngClass]="showForm? 'col-md-8': 'col-md-12'" 
     *ngIf="manuscript && manuscript.files.length > 0">
   <manuscript-file-list [(files)]="manuscript.files" [(markedForDelete)]="markedForDelete">
   </manuscript-file-list>

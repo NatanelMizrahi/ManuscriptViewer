@@ -1,4 +1,4 @@
-<div id="viewwrapper" class="viewer-wrapper">
+<div class="viewer-wrapper">
   <div class="col-md-3 well full-height files-list-box">
     <h4>Files</h4>
     <hr>
@@ -13,7 +13,7 @@
   </div>
 
   <!--viewer-->
-  <div id="filewrapper" *ngIf="selectedFile" class="well full-height image-container container-fluid" [ngClass]="{fullscreen:fullscreen}">
+  <div *ngIf="selectedFile" class="well full-height image-container container-fluid" [ngClass]="{fullscreen:fullscreen}">
     <button class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true" (click)="selectedFile = null">&times;</span>
     </button>

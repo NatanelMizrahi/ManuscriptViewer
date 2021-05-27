@@ -9,20 +9,18 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var ObjectId = mongoose.Types.ObjectId;
 
+const test_users = require('./test/users').test_users;
 //URLs
-
-// const mongoURI = "mongodb://132.72.23.63:3011/TIP";
-// const mongoURI = "mongodb://admin:tiip191@ds161653.mlab.com:61653/tiip191"; 
-const mongoURI = "mongodb://tip:tiip191@ds161653.mlab.com:61653/tiip191"; 
-// const mongoURI = "mongodb://localhost:27017/manuscripts";
+const production = (process.env.NODE_ENV === 'production');
+const mongoURI = process.env.MONGODB_URI || "mongodb://localhost:27017/tiip191";//" mongodb+srv://admin:admin@tiip191.h7nbt.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 
 // MongoDB
-var dbOptions = { useNewUrlParser: true };
+var dbOptions = { useNewUrlParser: true, useUnifiedTopology: true };
 mongoose.connect(mongoURI, dbOptions);
 var db = mongoose.connection;
 
 db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function () { 
+db.once('open', function () {
   console.log("Database connection ready");
   startServer();
 });
@@ -36,7 +34,7 @@ var startServer = function () {
 }
 
 // Mongoose Schemas
-var UserSchema = new Schema({ //TODO: Chen and Nitzan: review  
+var UserSchema = new Schema({
   _id: Schema.Types.ObjectId,
   username: String,
   manuscriptIds: [Schema.Types.ObjectId]
@@ -71,7 +69,7 @@ var ManuscriptSchema = new Schema({
 
 var Manuscripts = mongoose.model('Manuscripts', ManuscriptSchema);
 var Versions = mongoose.model('Versions', VersionSchema);
-var Users = mongoose.model('Users', UserSchema); //TODO: Chen and Nitzan: review  
+var Users = mongoose.model('Users', UserSchema);
 
 // Express
 var app = express();
@@ -130,15 +128,15 @@ app.get("/api/manuscripts", function (req, res) {
   Versions.aggregate([{
     $project: { last: { $arrayElemAt: ["$versionIds", -1] } }
   }]).then(docs => getManuscripts(
-      docs.map(idArr => mongoose.Types.ObjectId(idArr.last)), 
+      docs.map(idArr => mongoose.Types.ObjectId(idArr.last)),
       res))
-    .catch(console.error);
+      .catch(console.error);
 });
 
 //Validate form
-var ValueError = function (res, fieldname) { 
-  handleError(res, `Invalid user input", "${fieldname} is mandatory.`, 400); 
-  return false; 
+var ValueError = function (res, fieldname) {
+  handleError(res, `Invalid user input", "${fieldname} is mandatory.`, 400);
+  return false;
 }
 
 var checkValidEntry = function (req, res) {
@@ -154,51 +152,50 @@ var createVersionEntry = (_id) => ({ _id: _id, versionIds: [_id] });
 
 var linkManuscriptToUserPromise = function(ownerId, manuscript_id){
   return new Promise( function(resolve,reject){
-    //TODO: Chen and Nitzan: add code to link manuscript_id to owner here  
     Users.findOneAndUpdate(
-      IdQuery(ownerId),
-      { $push: { manuscriptIds: manuscript_id } },
-      { new: true },
-      function (err, userUpdated) {
-        if (err) reject(res);
-        else {
-          console.log("updated user:", userUpdated);
-          resolve();
-        }
-    });
+        IdQuery(ownerId),
+        { $push: { manuscriptIds: manuscript_id } },
+        { new: true },
+        function (err, userUpdated) {
+          if (err) reject(res);
+          else {
+            console.log("updated user:", userUpdated);
+            resolve();
+          }
+        });
   });
 }
-//Returns a Promise of version creation 
+//Returns a Promise of version creation
 var createVersion = function(newManuscript){
   return new Promise(function (resolve, reject) {
     if (!newManuscript.versions || newManuscript.versions.length == 0) {
       Versions.create(createVersionEntry(newManuscript._id),
-        function (err, versions) {
-          if (err) handleError(res, err.message, "Failed to create version for new manuscript.");
-          else {
-            console.log("ownerID:", newManuscript.ownerId);
-            linkManuscriptToUserPromise(newManuscript.ownerId, newManuscript._id)
-            .then(()=>{
-              console.log("new version:", versions);
-              resolve(versions);
-            })
-            .catch(console.err);
-          }
-        });
+          function (err, versions) {
+            if (err) handleError(res, err.message, "Failed to create version for new manuscript.");
+            else {
+              console.log("ownerID:", newManuscript.ownerId);
+              linkManuscriptToUserPromise(newManuscript.ownerId, newManuscript._id)
+                  .then(()=>{
+                    console.log("new version:", versions);
+                    resolve(versions);
+                  })
+                  .catch(console.err);
+            }
+          });
     }
     else {
       console.log("versionID to add:", newManuscript.versionId);
       Versions.findOneAndUpdate(
-        IdQuery(newManuscript.versionId),
-        { $push: { versionIds: newManuscript._id } },
-        { new: true },
-        function (err, versions) {
-          if (err) handleError(res, err.message, "Failed to create new version for existing manuscript.");
-          else {
-            console.log("updated version:", versions);
-            resolve(versions);
-          }
-        });
+          IdQuery(newManuscript.versionId),
+          { $push: { versionIds: newManuscript._id } },
+          { new: true },
+          function (err, versions) {
+            if (err) handleError(res, err.message, "Failed to create new version for existing manuscript.");
+            else {
+              console.log("updated version:", versions);
+              resolve(versions);
+            }
+          });
     }
   }); //end of Promise
 }
@@ -216,13 +213,13 @@ app.post("/api/manuscripts", function (req, res) {
   newManuscript.createDate = new Date();
 
   createVersion(newManuscript)
-    .then(versions => {
-      newManuscript.versionId = versions._id;
-      newManuscript.versions = versions.versionIds;
-      createManuScript(newManuscript, res);
-      
-    })
-    .catch(console.error);
+      .then(versions => {
+        newManuscript.versionId = versions._id;
+        newManuscript.versions = versions.versionIds;
+        createManuScript(newManuscript, res);
+
+      })
+      .catch(console.error);
 });
 
 //TODO: PROMISIFY
@@ -244,13 +241,13 @@ var updateVersionsArray = function (versionIds, callback = () => { }) {
   console.log("-------updating versions-------");
   console.log("updating versions for:", versionIds);
   Manuscripts.updateMany(
-    { _id: { $in: versionIds.map(mongoose.Types.ObjectId) } },
-    { $set: { versions: versionIds } },
-    { new: true },
-    function (err, docs) {
-      console.log("updated versions for:", docs);
-      callback();
-    });
+      { _id: { $in: versionIds.map(mongoose.Types.ObjectId) } },
+      { $set: { versions: versionIds } },
+      { new: true },
+      function (err, docs) {
+        console.log("updated versions for:", docs);
+        callback();
+      });
 }
 
 /*  "/api/manuscripts/:id"
@@ -281,14 +278,14 @@ app.delete("/api/manuscripts/:id", function (req, res) {
     if (err) return handleError(res, err.message, "Failed to get manuscript for delete");
     Versions.findOneAndRemove(IdQuery(doc.versionId),function (err,versions){
       Manuscripts.deleteMany(
-        { _id: { $in: versions.versionIds.map(mongoose.Types.ObjectId) } },
-        function (err, docs) {
-           deleteDir(uploadsURL + doc.versionId, function(err){
-            if (err) return handleError(res, err.message, "Failed to delete files");
-            console.log("deleted versions for:", docs)
-            res.status(200).json(req.params.id);
-          });  
-        });
+          { _id: { $in: versions.versionIds.map(mongoose.Types.ObjectId) } },
+          function (err, docs) {
+            deleteDir(uploadsURL + doc.versionId, function(err){
+              if (err) return handleError(res, err.message, "Failed to delete files");
+              console.log("deleted versions for:", docs)
+              res.status(200).json(req.params.id);
+            });
+          });
     });
     // Manuscripts.deleteOne(IdQuery(req.params.id), function (err, result) {
     //   if (err) handleError(res, err.message, "Failed to delete manuscript");
@@ -356,32 +353,32 @@ uploadFileAsync = function (file) {
 
 var uploadToDB = function (req, res) {
   Promise.all(req.files.map(uploadFileAsync))
-    .then(files => {
-      console.log("files uploaded to DB successfully:");
-      return res.json(files);
-    });
+      .then(files => {
+        console.log("files uploaded to DB successfully:");
+        return res.json(files);
+      });
 };
 
 var updateFileList = function (req, res) {
   return res.json(req.files.map(file => (
-    { 
-      url: file.path,  
-      name: file.originalname 
-    }
+      {
+        url: file.path,
+        name: file.originalname
+      }
   )));
 }
 
 
 function mkdirRec(path, basePath=""){
-  let pathAsArray = path.split(/\\|\//g); 
+  let pathAsArray = path.split(/\\|\//g);
   let currentPath= basePath;
   console.log("[mkdir] full path:", basePath + pathAsArray.join('/'));
   for (let i = 0; i < pathAsArray.length; i++) {
     currentPath += pathAsArray[i] + "/";
-    console.log("[mkdir]",currentPath);  
+    console.log("[mkdir]",currentPath);
     if (!fs.existsSync(currentPath))
       fs.mkdirSync(currentPath);
-  } 
+  }
 }
 var ensurePathExists= function(req, res, next){
   console.log(req.params.title);
@@ -391,9 +388,9 @@ var ensurePathExists= function(req, res, next){
 }
 
 var copyFilesToNewVersion = function(res, newManuscript,callback){
-  let numOfVersions = newManuscript.versions.length; 
-  if(numOfVersions == 1) 
-    return callback(); //no need to copy, only one version 
+  let numOfVersions = newManuscript.versions.length;
+  if(numOfVersions == 1)
+    return callback(); //no need to copy, only one version
   let latestVersion = numOfVersions - 1;
   let versionToCopy = latestVersion - 1;
   let title = newManuscript.versionId;
@@ -425,7 +422,7 @@ var deleteFiles= function(req, res){
     console.info("deleted:",files);
     return res.status(200).json(files);
   })
-    .catch(console.err);
+      .catch(console.err);
 }
 
 var deleteDir = function(path, cb){
@@ -436,8 +433,8 @@ var maxFiles = 50;
 var localStorage = true;
 
 var upload = multer(localStorage ?
-  { storage: storage } :
-  { dest: uploadsURL }
+    { storage: storage } :
+    { dest: uploadsURL }
 );
 const multUpload = upload.array('uploads[]', maxFiles);
 
@@ -445,18 +442,32 @@ app.post('/upload/:ownerid/:title/:version', ensurePathExists, multUpload, updat
 app.delete('/upload/', deleteFiles );
 // app.post('/upload/:id', multUpload, uploadToDB);
 
-
-// test methods
-function addTestUsers(){
-  // mongoose.connection.db.listCollections().toArray(function (err, names) { console.log(names.map(n=>n.name)); });
-  var  test_users = [
-    {_id:ObjectId("111111111111111111111111"), username:"Scooby Doo",  manuscriptIds:[]},
-    {_id:ObjectId("222222222222222222222222"), username:"Never Again",  manuscriptIds:[]},
-    {_id:ObjectId("333333333333333333333333"), username:"Dani Roop",    manuscriptIds:[]}
-  ];
-  Users.insertMany(test_users)
-  	.then(function (docs) {
-	    Users.find({}, console.log);
-    })
-    .catch(console.log);
+function addUser(req,res){
+  const user = req.body;
+  Users.insertOne(user)
+      .then(doc => {
+        console.log("Added the following user to the database:");
+        console.log(doc);
+        res.status(200).json(doc);
+      })
+      .catch(err => handleError(res, err.message, "Failed to add user"));
 }
+app.post('/api/users', addUser);
+
+// Test Routes
+function addTestUsers(req,res){
+  const testUsersCopy = JSON.parse(JSON.stringify(test_users));
+  for (let user of testUsersCopy)
+    user._id = ObjectId(user._id);
+  Users.insertMany(test_users)
+      .then(users => {
+        console.log("Added the following users to the database:");
+        console.log(users);
+        const randomUser = users[Math.floor(Math.random() * users.length)];
+        res.redirect('/')
+        // res.status(200).json(randomUser);
+      })
+      .catch(err => handleError(res, err.message, "Failed to add users. HINT: Maybe they already exist in DB?"));
+}
+
+app.get('/test/users', addTestUsers);
