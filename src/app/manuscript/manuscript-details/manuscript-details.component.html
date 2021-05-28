@@ -108,11 +108,11 @@
       <div *ngIf="manuscript.versionId" class="form-group row">
         <label for="version" class="col-md-2 col-form-label">version</label>
         <div class="col-md-4">
-          <button class="btn btn-warning " (click)="confirmExecFunc(prompt, createVersion)">New Version</button>
+          <button class="btn btn-warning " (click)="confirmExecFunc(prompt, createVersion, false)">New Version</button>
         </div>
         <div class="col-md-6">
           <select class="form-control"
-                (change)="confirmExecFunc(prompt, setVersion, $event.target.value)" 
+                (change)="confirmExecFunc(prompt, setVersion, false, $event.target.value)"
                 [required]="true"
                 [disabled]="inProgress">
             <option *ngFor="let version of manuscript.versions; let i = index" 
@@ -139,8 +139,8 @@
       <button class="btn btn-info btn-space"  *ngIf="manuscript._id && !isOriginalVersion"   
               (click)="updateManuscript(manuscript)"
               [disabled]="inProgress || !isChanged()">Update</button>
-      <button class="btn btn-danger btn-space" *ngIf="manuscript._id" 
-              (click)="deleteManuscript(manuscript._id)" 
+      <button class="btn btn-danger btn-space" *ngIf="manuscript._id"
+              (click)="confirmExecFunc(prompt, deleteCurrManuscript, true)"
               [disabled]="inProgress">Delete</button>
     </form>
     
@@ -211,18 +211,20 @@
 </div>
 
 <!--VIEWER-->
-<div class="full-height" 
-    [ngClass]="showForm? 'col-md-8': 'col-md-12'" 
-    *ngIf="manuscript && manuscript.files.length > 0">
+<div class="full-height"
+     [ngClass]="showForm? 'col-md-8': 'top-right-fs col-md-12'"
+     style="background-color: antiquewhite;"
+     *ngIf="manuscript && manuscript.files.length > 0">
   <manuscript-file-list [(files)]="manuscript.files" [(markedForDelete)]="markedForDelete">
   </manuscript-file-list>
 </div>
+
 
 <!--CONFIRMATION BOX-->
 <ng-template #prompt let-modal let-manuscript="manuscript">
   <div class="modal-header">
     <h4 class="modal-title" id="modal-title">Update Manuscript Version</h4>
-    <button type="button" class="close" aria-label="Close button" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')">
+    <button type="button" class="close" aria-label="Close button" aria-describedby="modal-title" (click)="modal.close(false)">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -233,7 +235,7 @@
     </p>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-outline-secondary" (click)="modal.close(false)">Revert changes</button>
-    <button type="button" ngbAutofocus class="btn btn-danger" (click)="modal.close(true)">Save</button>
+    <button type="button" class="btn btn-outline-secondary"   (click)="modal.close(false)">Revert changes</button>
+    <button type="button" ngbAutofocus class="btn btn-danger" (click)="modal.close(true)">Save changes</button>
   </div>
 </ng-template>

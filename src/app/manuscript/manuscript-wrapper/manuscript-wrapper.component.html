@@ -1,12 +1,16 @@
 <div class="top-right">
     <div>
-        <a href="/test/users">
-            <button class="btn btn-info float">ADD TEST USERS</button>
-        </a>
+
         <button *ngFor="let user of testUsers; let i = index"
                 (click)='setUserTest(i)'
                 class="btn btn-info float">{{ user.username }}
         </button>
+        <a href="/test/resetdb">
+            <button class="btn btn-danger float">
+                <i class="glyphicon glyphicon-exclamation-sign"></i>
+                 RESET DATABASE
+            </button>
+        </a>
     </div>
 </div>
 

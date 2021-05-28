@@ -134,7 +134,10 @@ export class ManuscriptDetailsComponent {
       manuscript.files = manuscript.files.concat(files);
       return manuscript;
   }
-
+  deleteCurrManuscript(userConfirmation : boolean){
+    if(userConfirmation)
+      this.deleteManuscript(this.manuscript._id);
+  }
   deleteManuscript(manuscriptId: String): void {
     this.lock();
     this.manuscriptService.deleteManuscript(manuscriptId)
@@ -142,6 +145,7 @@ export class ManuscriptDetailsComponent {
         this.deleteHandler(deletedManuscriptId);
         this.saveOriginal(null);
         this.release();
+        this.manuscript = null;
       });
   }
 
@@ -259,13 +263,13 @@ export class ManuscriptDetailsComponent {
     console.log(this.manuscript.files);
   }
 
-  confirmExecFunc(prompt, funcToExec:Function, ...args){
+  confirmExecFunc(prompt, funcToExec:Function, alwaysConfirm, ...args){
     var funcToExecBound = funcToExec.bind(this);
-    if (this.autoSave || !this.isChanged() || this.isOriginalVersion)
+    if (!alwaysConfirm &&(this.autoSave || !this.isChanged() || this.isOriginalVersion))
       funcToExecBound(...args);
     else{
       this.modalService.open(prompt).result
-      .then((doUpdateFirst) => { funcToExecBound(...args, doUpdateFirst); });
+      .then((doUpdateFirst) => funcToExecBound(...args, doUpdateFirst));
     }
   }
 

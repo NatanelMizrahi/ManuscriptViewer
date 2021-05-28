@@ -14,7 +14,19 @@ export class ManuscriptFileListComponent {
   @Input() markedForDelete: ManuscriptFile[];
 
   @HostListener('document:keyup', ['$event']) handleDeleteKeyboardEvent(e: KeyboardEvent) {
-    if(e.key === 'Escape') this.fullscreen= false;
+    switch (e.key) {
+      case "Up":
+      case "ArrowUp":
+        this.selectPrevFile();
+        break;
+      case "Down":
+      case "ArrowDown":
+        this.selectNextFile();
+        break;
+      case 'Escape':
+        this.fullscreen= false;
+        break;
+    }
   }
 
   selectedFile: ManuscriptFile;
@@ -44,6 +56,12 @@ export class ManuscriptFileListComponent {
   selectFile(i:number){
     this.selectedFile = this.files[i];
     this.selectedIndex = i;
+  }
+  selectPrevFile(){
+    this.selectFile(Math.max(0, this.selectedIndex - 1))
+  }
+  selectNextFile(){
+    this.selectFile(Math.min( this.files.length-1, this.selectedIndex + 1))
   }
   toggleFullScreen(){
     this.fullscreen= !this.fullscreen;

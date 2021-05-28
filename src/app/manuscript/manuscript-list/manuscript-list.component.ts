@@ -72,12 +72,11 @@ export class ManuscriptListComponent implements OnInit {
     return <Manuscript>JSON.parse(JSON.stringify(testDB[0])); //deep copy from testDB
   }
   createNewManuscript() {
-    var manuscript: Manuscript = !this.testModel ? 
-      new Manuscript('','', null,'English','','', [], this.testFiles? testFiles : []) :
-      this.getDummyManuscript()
-    this.selectManuscript(manuscript);
+    this.selectManuscript(new Manuscript('','', new Date(),'English','','', [], []));
   }
-
+  autofillNewManuscript(){
+    this.selectManuscript(this.getDummyManuscript())
+  }
   deleteManuscript = (manuscriptId: String) => {
     var idx = this.getIndexOfManuscript(manuscriptId);
     if (idx !== -1) {

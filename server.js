@@ -274,15 +274,16 @@ app.put("/api/manuscripts/:id", function (req, res) {
 });
 
 app.delete("/api/manuscripts/:id", function (req, res) {
-  Manuscripts.findOne(IdQuery(req.params.id), function (err, doc) {
+  Manuscripts.findOne(IdQuery(req.params.id), function (err, manuscriptDoc) {
     if (err) return handleError(res, err.message, "Failed to get manuscript for delete");
-    Versions.findOneAndRemove(IdQuery(doc.versionId),function (err,versions){
+    Versions.findOneAndRemove(IdQuery(manuscriptDoc.versionId),function (err,versions){
+      console.log(versions);
       Manuscripts.deleteMany(
           { _id: { $in: versions.versionIds.map(mongoose.Types.ObjectId) } },
           function (err, docs) {
-            deleteDir(uploadsURL + doc.versionId, function(err){
+            deleteDir(getManuscriptPath(manuscriptDoc.ownerId,manuscriptDoc.versionId), function(err){
               if (err) return handleError(res, err.message, "Failed to delete files");
-              console.log("deleted versions for:", docs)
+              console.log("deleted versions for:", manuscriptDoc.versionId)
               res.status(200).json(req.params.id);
             });
           });
@@ -302,7 +303,9 @@ const uploadsURL = 'uploads/';
 app.use('/'+ uploadsURL , express.static(path.join(__dirname, uploadsURL)));
 
 var getDirPath = (req) => `${uploadsURL}${req.params.ownerid}/${req.params.title}/version${req.params.version}`;
-var getVersionPath = (ownerId, title, version) => `${uploadsURL}${ownerId}/${title}/version${version}`;
+var getManuscriptPath = (ownerId, title) => `${uploadsURL}${ownerId}/${title}`;
+var getVersionPath = (ownerId, title, version) => `${getManuscriptPath(ownerId, title)}/version${version}`;
+
 
 // specify the folder
 // app.use(express.static(path.join(__dirname, uploadsURL)));
@@ -471,3 +474,15 @@ function addTestUsers(req,res){
 }
 
 app.get('/test/users', addTestUsers);
+
+app.get('/test/resetdb', function (req,res) {
+  db.dropDatabase()
+      .then( _ => {
+        console.log("Dropped Database");
+        deleteDir(uploadsURL, function(err){
+          if (err) return handleError(res, err.message, "Failed to delete files");
+          console.log("Deleted " + uploadsURL);
+          res.status(200).redirect('/test/users');
+        })
+      }).catch(err => handleError(res, err.message, "Failed to drop database"));
+});

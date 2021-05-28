@@ -5,7 +5,11 @@
     <div class="list-wrapper">
       <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
         <div class="example-box" *ngFor="let file of files; let i = index" cdkDrag>
-          <img [src]="file.url" class="img-responsive" [alt]="file.name" (click)="selectedFile = file; selectedIndex=i">
+          <img [src]="file.url"
+               class="img-responsive"
+               [alt]="file.name"
+               (click)="selectedFile=file;
+               selectedIndex=i">
           <img *cdkDragPreview [src]="file.url" [alt]="file.url">
         </div>
       </div>
@@ -80,7 +84,9 @@
 
     <hr style="margin-top:5px">
     <div class="img-wrapper">
-      <img id="selectedFile" [src]="selectedFile.url" class="img-responsive">
+      <img id="selectedFile" [src]="selectedFile.url"
+           class="img-responsive"
+           (dblclick)="toggleFullScreen()">
     </div>
   </div>
   <div class="alert alert warning fullscreen-message" *ngIf="fullscreenMessage">press ESC to exit fullscreen</div>
