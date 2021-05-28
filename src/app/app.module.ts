@@ -10,7 +10,6 @@ import { ManuscriptListComponent } from './manuscript/manuscript-list/manuscript
 import { MyDatePickerModule } from 'mydatepicker';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ManuscriptFileListComponent } from './manuscript/manuscript-file-list/manuscript-file-list.component';
-import { FileViewerComponent } from './manuscript/file-viewer/file-viewer.component';
 import { NgbdModalConfirmAutofocus } from './manuscript/manuscript-details/confirm';
 import { ManuscriptWrapperComponent } from './manuscript/manuscript-wrapper/manuscript-wrapper.component';
 
@@ -20,7 +19,6 @@ import { ManuscriptWrapperComponent } from './manuscript/manuscript-wrapper/manu
     ManuscriptDetailsComponent,
     ManuscriptListComponent,
     ManuscriptFileListComponent,
-    FileViewerComponent,
     NgbdModalConfirmAutofocus,
     ManuscriptWrapperComponent
   ],

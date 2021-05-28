@@ -1,6 +1,6 @@
-<div *ngIf="manuscript" class="col-md-4 full-height">
-  <div class="row well well-lg" [ngClass]="{visible: showForm, hidden:!showForm, 'full-height': !showUploads}">
-    <form #form="ngForm">
+<div *ngIf="manuscript" class="full-height no-margin col-md-4" [hidden]="!showForm">
+  <div class="well well-lg" [ngClass]="{visible: showForm, hidden:!showForm, 'full-height': !showUploads}">
+    <form #form="ngForm" id="manuscriptForm">
       <!-- TODO fix -->
       <button *ngIf="!manuscript._id" class="close" data-dismiss="alert" aria-label="Close">
         <span  aria-hidden="true" (click)="toggleForm(); manuscript = null; pendingFiles= []">&times;</span>
@@ -147,7 +147,7 @@
   </div>
 
   <!--UPLOAD FORM-->
-  <div *ngIf="manuscript && showUploads" class="row well well-lg">
+  <div *ngIf="manuscript && showUploads" class="well well-lg">
     <form class="full-width" name="Uploadform" #Uploadform="ngForm">
       <button class="close" data-dismiss="alert" aria-label="Close">
         <span aria-hidden="true" (click)="toggleUpload()">&times;</span>
@@ -211,9 +211,8 @@
 </div>
 
 <!--VIEWER-->
-<div class="full-height"
-     [ngClass]="showForm? 'col-md-8': 'top-right-fs col-md-12'"
-     style="background-color: antiquewhite;"
+<div class="full-height no-margin"
+     [ngClass]="showForm? 'col-md-8': 'col-md-12'"
      *ngIf="manuscript && manuscript.files.length > 0">
   <manuscript-file-list [(files)]="manuscript.files" [(markedForDelete)]="markedForDelete">
   </manuscript-file-list>

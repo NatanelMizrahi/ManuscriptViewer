@@ -33,3 +33,10 @@ form ul {
     0%   { opacity: 1; -moz-transform: translateX(0); }
     100% { opacity: 0; -moz-transform: translateX(-100%); }   
 }
+
+@media (max-width:1100px) {
+    #manuscriptForm label {
+        display: none;
+        visibility: hidden;
+    }
+}

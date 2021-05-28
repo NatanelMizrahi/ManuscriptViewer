@@ -49,7 +49,7 @@ button.calendar, button.calendar:active {
 .full-height{
    height:100%;
 }
-.well {
-   /* background: #222;
-   color: #999999; */
+.no-margin {
+    margin:0;
+    padding: 0;
 }
