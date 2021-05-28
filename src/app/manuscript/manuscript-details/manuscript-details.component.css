@@ -35,8 +35,15 @@ form ul {
 }
 
 @media (max-width:1100px) {
-    #manuscriptForm label {
+    #manuscript-form label {
         display: none;
         visibility: hidden;
     }
+}
+
+.flex0 {
+    flex: 0;
+}
+.flex1{
+    flex: 1;
 }

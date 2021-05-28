@@ -53,3 +53,12 @@ button.calendar, button.calendar:active {
     margin:0;
     padding: 0;
 }
+
+.full-height .well {
+    margin: 0;
+}
+.full-height-flex {
+    display: flex;
+    flex-direction: column;
+    height:100%;
+}
