@@ -25,10 +25,9 @@ export class ManuscriptService {
 
     // post("/api/manuscripts")
     createManuscript(newManuscript: Manuscript): Promise<void | Manuscript> {
-      console.log("(1.1) serivce ", newManuscript);
       return this.http.post(this.manuscriptsUrl, newManuscript)
                  .toPromise()
-                 .then(response => { console.log("(1.9) after service", response);return response as Manuscript})
+                 .then(response => response as Manuscript)
                  .catch(this.handleError);
     }
 
@@ -59,7 +58,6 @@ export class ManuscriptService {
     uploadFiles(filesToUpload:Array<File>, manuscript:Manuscript = testDB[0]){
       var version = Math.max(0, manuscript.versions.indexOf(manuscript._id));
       var uploadURL = `/upload/${manuscript.ownerId}/${manuscript.versionId}/${version}`;
-      console.log("version:",version);
       const formData: any = new FormData();
       for(let i =0; i < filesToUpload.length; i++)
           formData.append("uploads[]", filesToUpload[i], filesToUpload[i].name);

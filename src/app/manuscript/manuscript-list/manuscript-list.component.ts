@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Manuscript } from '../manuscript';
 import { ManuscriptService } from '../manuscript.service';
-import { ManuscriptDetailsComponent } from '../manuscript-details/manuscript-details.component';
 import { testDB, testFiles } from '../test/testFiles'
 import { User } from '../manuscript-wrapper/user';
 
@@ -42,7 +41,6 @@ export class ManuscriptListComponent implements OnInit {
       return;
     }
     if (this.user){
-      console.log("current user is ", this.user.username);
       this.getUserManuscripts();
     }
   }
@@ -57,10 +55,13 @@ export class ManuscriptListComponent implements OnInit {
     .getManuscripts(this.user._id)
     .then((manuscripts: Manuscript[]) => {
       this.manuscripts = manuscripts;
-      console.log("returned for user:", this.user._id);
+      console.log(`${this.user.username}'s manuscripts:`);
       console.dir(this.manuscripts);
     })
-    .catch(err=> { console.log("Server GET error:"+ err.toString()); this.manuscripts = [];});
+    .catch(err=> {
+      console.error("Server GET error:"+ err.toString());
+      this.manuscripts = [];
+    });
   }
 
   selectManuscript(manuscript: Manuscript) {
@@ -93,8 +94,7 @@ export class ManuscriptListComponent implements OnInit {
   }
 
   updateManuscript = (manuscript: Manuscript) => {
-    console.log("i got here bro");
-    var idx = this.getIndexOfManuscript(manuscript._id);
+    let idx = this.getIndexOfManuscript(manuscript._id);
     if (idx !== -1) {
       this.manuscripts[idx] = manuscript;
       this.selectManuscript(manuscript);

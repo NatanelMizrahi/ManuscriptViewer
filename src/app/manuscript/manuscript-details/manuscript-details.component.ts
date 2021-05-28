@@ -66,8 +66,7 @@ export class ManuscriptDetailsComponent {
   }
 
   setDate(e) {
-    if(!e) console.log("invalid date format:", e);
-    else this.manuscript.date= e.jsdate; 
+    if(e) this.manuscript.date= e.jsdate;
   }
 
   lock(){ this.inProgress = true; }
@@ -157,7 +156,6 @@ export class ManuscriptDetailsComponent {
 
     var replaceWithNewVersion = ()=>{
       this.createManuscript(copy).then((newManuscript)=> {
-        console.log("after replace create1:", newManuscript);
         that.deleteHandler(toRemoveFromList);
         that.updateHandler(newManuscript);
         that.pendingFiles = [];
@@ -172,7 +170,6 @@ export class ManuscriptDetailsComponent {
       that.updateManuscript(this.manuscript)  //save current version TODO add prompt
       .then(updatedManuscript=>{
         that.createManuscript(copy).then((newManuscript)=> {
-          console.log("after replace create2:", newManuscript);
           that.deleteHandler(toRemoveFromList);
           that.updateHandler(newManuscript);
           that.pendingFiles = [];
@@ -226,13 +223,8 @@ export class ManuscriptDetailsComponent {
           console.log('files uploaded successfully!');
           console.log(event);
           var fileResponse= event.body as ManuscriptFile[];
-          // if (!newManuscript.files) 
-          // newManuscript.files = [];
-          // newManuscript.files = newManuscript.files.concat(response as ManuscriptFile[]);
-          console.log("file resposne:",fileResponse.map(x=>x.url));
           this.pendingFiles = [];
           this.uploadState= "DONE";
-          // resolve(fileResponse);
           resolve(fileResponse);
         }
       });
@@ -259,8 +251,6 @@ export class ManuscriptDetailsComponent {
     this.uploadProgress = 0;
     this.showUploads = false; 
     this.showFormChange.emit(false);
-    console.log(this.manuscript); 
-    console.log(this.manuscript.files);
   }
 
   confirmExecFunc(prompt, funcToExec:Function, alwaysConfirm, ...args){

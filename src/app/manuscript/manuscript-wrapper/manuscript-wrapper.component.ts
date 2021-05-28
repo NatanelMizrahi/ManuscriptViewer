@@ -20,7 +20,6 @@ export class ManuscriptWrapperComponent {
   setUser(user:User){
     this.show = true;
     this.user = user;
-    console.log("Wrapper:: Changing to user ", this.user.username);
     this.child.setUser(user);
     this.child.ngOnInit();
   }

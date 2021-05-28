@@ -113,8 +113,6 @@ var getManuscripts = function (manuscriptIds, res) {
 
 app.get("/api/users/:id", function (req, res) {
   //Get all the manuscripts of user with the ID "id"
-  console.log("userID is:", req.params.id);
-  console.log("userID Q is:");
   console.log(IdQuery(req.params.id));
   Users.findById(req.params.id, function (err, user) {
     if (err) handleError(res, err.message, `Failed to get manuscripts for userID: ${req.params.id}`);
@@ -202,7 +200,6 @@ var createVersion = function(newManuscript){
 
 app.post("/api/manuscripts", function (req, res) {
   var newManuscript = req.body;
-  console.log("(1.2) server post",newManuscript);
   if (!checkValidEntry(req, res)) return;
   newManuscript._id = mongoose.Types.ObjectId();
 
@@ -222,9 +219,7 @@ app.post("/api/manuscripts", function (req, res) {
       .catch(console.error);
 });
 
-//TODO: PROMISIFY
 var createManuScript = function(newManuscript, res){
-  console.log("(1.3) create in server", newManuscript)
   Manuscripts.create(newManuscript, function (err, doc) {
     if (err) return handleError(res, err.message, "Failed to create new manuscript.");
     //update the version array for each manuscript version inside it
@@ -378,14 +373,11 @@ function mkdirRec(path, basePath=""){
   console.log("[mkdir] full path:", basePath + pathAsArray.join('/'));
   for (let i = 0; i < pathAsArray.length; i++) {
     currentPath += pathAsArray[i] + "/";
-    console.log("[mkdir]",currentPath);
     if (!fs.existsSync(currentPath))
       fs.mkdirSync(currentPath);
   }
 }
 var ensurePathExists= function(req, res, next){
-  console.log(req.params.title);
-  // mkdirRec(req.params.title + "/" + req.params.version, uploadsURL); //more effiecient but error prone
   mkdirRec(getDirPath(req));
   next();
 }
@@ -410,7 +402,7 @@ var copyFilesToNewVersion = function(res, newManuscript,callback){
 }
 
 var deleteFiles= function(req, res){
-  console.log("delete:",req.body);
+  console.log("delete files:", req.body);
   let files = req.body.map(file=> file.url);
   var deletePromise = function(file){
     return new Promise((resolve, reject)=>{
@@ -424,8 +416,7 @@ var deleteFiles= function(req, res){
   Promise.all(files.map(deletePromise)).then(files =>{
     console.info("deleted:",files);
     return res.status(200).json(files);
-  })
-      .catch(console.err);
+  }).catch(console.err);
 }
 
 var deleteDir = function(path, cb){
