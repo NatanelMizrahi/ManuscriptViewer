@@ -47,7 +47,8 @@ button.calendar, button.calendar:active {
   }
 
 .full-height{
-   height:100%;
+    height:100%;
+    min-height:100%;
 }
 .no-margin {
     margin:0;
@@ -61,4 +62,8 @@ button.calendar, button.calendar:active {
     display: flex;
     flex-direction: column;
     height:100%;
+}
+.full-width-flex {
+    display: flex;
+    width:100%;
 }

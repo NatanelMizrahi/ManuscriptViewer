@@ -12,7 +12,7 @@ var ObjectId = mongoose.Types.ObjectId;
 const test_users = require('./test/users').test_users;
 //URLs
 const production = (process.env.NODE_ENV === 'production');
-const mongoURI = process.env.MONGODB_URI || "mongodb://localhost:27017/tiip191";//" mongodb+srv://admin:admin@tiip191.h7nbt.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+const mongoURI = process.env.MONGODB_URI || "mongodb://localhost:27017/tiip191";
 
 // MongoDB
 var dbOptions = { useNewUrlParser: true, useUnifiedTopology: true };

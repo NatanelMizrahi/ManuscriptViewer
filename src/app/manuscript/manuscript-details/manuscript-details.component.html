@@ -1,6 +1,6 @@
 <div *ngIf="manuscript" class="full-height no-margin col-sm-4 col-md-4" [hidden]="!showForm">
     <div class="well well-lg" [ngClass]="{visible: showForm, hidden:!showForm, 'full-height': !showUploads}">
-      <form #form="ngForm">
+      <form #form="ngForm" id="manuscript-form">
         <!-- TODO fix -->
         <button *ngIf="!manuscript._id" class="close" data-dismiss="alert" aria-label="Close">
           <span  aria-hidden="true" (click)="toggleForm(); manuscript = null; pendingFiles= []">&times;</span>
