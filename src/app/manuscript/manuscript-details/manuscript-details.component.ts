@@ -120,6 +120,7 @@ export class ManuscriptDetailsComponent {
   }
 
   updateManuscriptInDB(manuscript: Manuscript){
+    console.log(manuscript.files.map(f=>f.url));
     return this.manuscriptService.updateManuscript(manuscript)
     .then((updatedManuscript: Manuscript) => {
       this.saveOriginal.bind(this)(updatedManuscript);
@@ -232,6 +233,8 @@ export class ManuscriptDetailsComponent {
   }
 
   deleteFiles(manuscript:Manuscript){
+    console.log("DELETING:");
+    console.log(this.markedForDelete.map(fileToDelete => fileToDelete.url));
     return this.manuscriptService.deleteFiles(this.markedForDelete)
     .then(urls => manuscript);
   }

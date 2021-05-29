@@ -220,29 +220,27 @@ app.post("/api/manuscripts", function (req, res) {
 });
 
 var createManuScript = function(newManuscript, res){
-  Manuscripts.create(newManuscript, function (err, doc) {
-    if (err) return handleError(res, err.message, "Failed to create new manuscript.");
+  Manuscripts.create(newManuscript)
+    .catch(err =>handleError(res, err.message, "Failed to create new manuscript."))
     //update the version array for each manuscript version inside it
-    updateVersionsArray(newManuscript.versions, function () {
-      copyFilesToNewVersion(res, newManuscript, function () {
-        res.status(201).json(doc);
-        console.log("Created Manuscript:", doc);
-      })
-    });
-  });
+    .then(newManuscriptDoc => updateVersionsArray(newManuscriptDoc))
+    .then(versions => copyFilesToNewVersion(res, newManuscript))
+    .then(updatedManuscript => {
+        res.status(201).json(updatedManuscript);
+        console.log("Created Manuscript:", updatedManuscript);
+     });
 };
 
-var updateVersionsArray = function (versionIds, callback = () => { }) {
+var updateVersionsArray = function (newManuscript) {
+  const versionIds = newManuscript.versions;
   console.log("-------updating versions-------");
   console.log("updating versions for:", versionIds);
-  Manuscripts.updateMany(
+  return Manuscripts.updateMany(
       { _id: { $in: versionIds.map(mongoose.Types.ObjectId) } },
       { $set: { versions: versionIds } },
-      { new: true },
-      function (err, docs) {
-        console.log("updated versions for:", docs);
-        callback();
-      });
+      { new: true })
+      .then(docs => console.log("updated versions for:", docs))
+      .catch(console.error);
 }
 
 /*  "/api/manuscripts/:id"
@@ -382,22 +380,32 @@ var ensurePathExists= function(req, res, next){
   next();
 }
 
-var copyFilesToNewVersion = function(res, newManuscript,callback){
+var copyFilesToNewVersion = function(res, newManuscript){
   let numOfVersions = newManuscript.versions.length;
   if(numOfVersions == 1)
-    return callback(); //no need to copy, only one version
+    return newManuscript; //no need to copy, only one version
   let latestVersion = numOfVersions - 1;
   let versionToCopy = latestVersion - 1;
   let title = newManuscript.versionId;
   let ownerId = newManuscript.ownerId;
   let srcPath = path.join(__dirname, getVersionPath(ownerId,title, versionToCopy)); //current version folder
   let destPath = path.join(__dirname, getVersionPath(ownerId,title, latestVersion)); //new version folder
-  mkdirRec(destPath); //create a diretory for the new version
+  mkdirRec(destPath); //create a directory for the new version
   console.log(`Copying files from version #${versionToCopy} to version #${latestVersion}...`);
-  ncp(srcPath, destPath, function (err) {
-    if (err) return handleError(res, err.message, "Failed to copy files to new version.");
-    console.log('Copying files complete.');
-    callback();
+  return new Promise((resolve, reject)=> {
+    ncp(srcPath, destPath, function (err) {
+      if (err) return handleError(res, err.message, "Failed to copy files to new version.");
+      console.log('Copying files complete.');
+      console.log('Updating mongo manuscript document file pointers to latest version.');
+
+      newManuscript.files.forEach(f => f.url = f.url.replace(/\/version\d+\//, `/version${latestVersion}/`));
+      Manuscripts.findOneAndUpdate(
+          IdQuery(newManuscript._id),
+          { $set: { files: newManuscript.files } },
+          { new: true })
+          .then(resolve)
+          .catch(reject);
+    });
   });
 }
 
@@ -408,10 +416,13 @@ var deleteFiles= function(req, res){
     return new Promise((resolve, reject)=>{
       //uploadsURL + rew.params.versionId+'/version'+req.params.version
       fs.unlink(file, function(err){
-        if (err) return handleError(res, err.message, "Failed to delete file:", file);
+        if (err) {
+          console.error("[IGNORE] Failed to delete file:" + file);
+          reject(err);
+        }
         resolve(file);
       });
-    });
+    }).catch(console.error);
   }
   Promise.all(files.map(deletePromise)).then(files =>{
     console.info("deleted:",files);
