@@ -136,7 +136,8 @@
         <button class="btn btn-danger btn-space" *ngIf="!manuscript._id"
                 (click)="resetHandler()"
                 [disabled]="inProgress">Reset</button>
-        <button class="btn btn-info btn-space"  *ngIf="manuscript._id && !isOriginalVersion"
+<!--        // && !isOriginalVersion-->
+        <button class="btn btn-info btn-space"  *ngIf="manuscript._id"
                 (click)="updateManuscript(manuscript)"
                 [disabled]="inProgress || !isChanged()">Update</button>
         <button class="btn btn-danger btn-space" *ngIf="manuscript._id"
